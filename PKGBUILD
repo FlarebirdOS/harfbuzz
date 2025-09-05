@@ -1,11 +1,12 @@
 pkgname=(
     harfbuzz
+    harfbuzz-cairo
     harfbuzz-icu
     harfbuzz-utils
 )
 pkgbase=harfbuzz
 pkgver=11.4.1
-pkgrel=1
+pkgrel=2
 pkgdesc="OpenType text shaping engine"
 arch=('x86_64')
 url="https://harfbuzz.github.io"
@@ -17,6 +18,7 @@ depends=(
     'glib2'
 )
 makedepends=(
+    'cairo'
     'glib2-devel'
     'gobject-introspection'
     'help2man'
@@ -49,11 +51,30 @@ package_harfbuzz() {
 
     ${meson_install} ${pkgdir}
 
+    _pick hb-cairo ${pkgdir}/usr/lib64/libharfbuzz-cairo*
+    _pick hb-cairo ${pkgdir}/usr/lib64/pkgconfig/harfbuzz-cairo.pc
+    _pick hb-cairo ${pkgdir}/usr/include/harfbuzz/hb-cairo.h
+
     _pick hb-icu ${pkgdir}/usr/lib64/libharfbuzz-icu*
     _pick hb-icu ${pkgdir}/usr/lib64/pkgconfig/harfbuzz-icu.pc
     _pick hb-icu ${pkgdir}/usr/include/harfbuzz/hb-icu.h
 
     _pick hb-utils ${pkgdir}/usr/bin
+}
+
+package_harfbuzz-cairo() {
+    pkgdesc+=" - Cairo integration"
+    depends=(
+        'cairo'
+        'freetype2'
+        'glib2'
+        'glibc'
+        'graphite2'
+        'harfbuzz'
+    )
+
+    mv hb-cairo/* ${pkgdir}
+
 }
 
 package_harfbuzz-icu() {
